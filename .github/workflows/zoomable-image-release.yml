@@ -1,0 +1,45 @@
+name: Publish Zoomable Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Exact package.json version to publish (for example 0.1.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: zoomable-image-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+      - name: Verify release branch and version
+        env:
+          EXPECTED_VERSION: ${{ inputs.version }}
+        run: |
+          test "$GITHUB_REF" = refs/heads/main
+          node --input-type=module -e "import pkg from './package.json' with { type: 'json' }; if (pkg.version !== process.env.EXPECTED_VERSION) throw new Error('Version mismatch');"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - run: pnpm test:release
+      - run: pnpm test:package
+      - run: pnpm format:check
+      - name: Publish verified package
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

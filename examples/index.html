@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Zoomable Image demo</title>
+  <style>
+    body {
+      font-family: system-ui;
+      margin: 3rem auto;
+      max-width: 720px;
+      padding: 1rem;
+    }
+  </style>
+  <h1>Zoomable Image</h1>
+  <p>Open the image. Use + / −, drag when zoomed, Tab for annotations, and Escape to close.</p>
+  <zoomable-image
+    alt="Sample diagram"
+    caption="A framework-independent image viewer"
+    display-width="100%"
+  ></zoomable-image>
+  <script type="module">
+    import { defineZoomableImage } from '../dist/index.js';
+    defineZoomableImage();
+    const image = document.querySelector('zoomable-image');
+    image.setAttribute(
+      'src',
+      'data:image/svg+xml,' +
+        encodeURIComponent(
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="1200" height="800" fill="#25364c"/><circle cx="600" cy="400" r="200" fill="#77bbee"/><text x="600" y="410" text-anchor="middle" font-size="48">Zoom me</text></svg>'
+        )
+    );
+    image.annotations = [
+      {
+        id: 'center',
+        x: 33,
+        y: 25,
+        width: 34,
+        height: 50,
+        text: 'Center circle',
+        tooltip: 'This region follows the image as you zoom and pan.'
+      }
+    ];
+  </script>
+</html>

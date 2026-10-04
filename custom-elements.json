@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "1.0.0",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "dist/index.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ZoomableImage",
+          "customElement": true,
+          "tagName": "zoomable-image",
+          "superclass": {
+            "name": "HTMLElement"
+          },
+          "attributes": [
+            {
+              "name": "src",
+              "description": "Image URL"
+            },
+            {
+              "name": "alt",
+              "description": "Accessible image description"
+            },
+            {
+              "name": "width",
+              "description": "Intrinsic image width"
+            },
+            {
+              "name": "height",
+              "description": "Intrinsic image height"
+            },
+            {
+              "name": "caption",
+              "description": "Plain text viewer caption"
+            },
+            {
+              "name": "display-width",
+              "description": "Inline image CSS width"
+            }
+          ],
+          "members": [
+            {
+              "kind": "method",
+              "name": "open",
+              "privacy": "public"
+            },
+            {
+              "kind": "method",
+              "name": "close",
+              "privacy": "public"
+            },
+            {
+              "kind": "method",
+              "name": "zoomIn",
+              "privacy": "public"
+            },
+            {
+              "kind": "method",
+              "name": "zoomOut",
+              "privacy": "public"
+            },
+            {
+              "kind": "method",
+              "name": "reset",
+              "privacy": "public"
+            },
+            {
+              "kind": "field",
+              "name": "src",
+              "privacy": "public",
+              "readonly": false
+            },
+            {
+              "kind": "field",
+              "name": "alt",
+              "privacy": "public",
+              "readonly": false
+            },
+            {
+              "kind": "field",
+              "name": "caption",
+              "privacy": "public",
+              "readonly": false
+            },
+            {
+              "kind": "field",
+              "name": "displayWidth",
+              "privacy": "public",
+              "readonly": false
+            },
+            {
+              "kind": "field",
+              "name": "annotations",
+              "privacy": "public",
+              "readonly": false
+            },
+            {
+              "kind": "field",
+              "name": "labels",
+              "privacy": "public",
+              "readonly": false
+            },
+            {
+              "kind": "field",
+              "name": "isOpen",
+              "privacy": "public",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "zoom",
+              "privacy": "public",
+              "readonly": true
+            }
+          ],
+          "events": [
+            {
+              "name": "zoomable-open",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "zoomable-close",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "zoomable-zoom",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "zoomable-annotation",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "zoomable-error",
+              "type": {
+                "text": "CustomEvent"
+              }
+            }
+          ],
+          "cssParts": [
+            {
+              "name": "trigger"
+            },
+            {
+              "name": "thumbnail"
+            },
+            {
+              "name": "dialog"
+            },
+            {
+              "name": "image"
+            },
+            {
+              "name": "close"
+            },
+            {
+              "name": "caption"
+            },
+            {
+              "name": "toolbar"
+            },
+            {
+              "name": "annotation"
+            },
+            {
+              "name": "tooltip"
+            }
+          ],
+          "cssProperties": [
+            {
+              "name": "--zoomable-image-width"
+            },
+            {
+              "name": "--zoomable-image-backdrop"
+            },
+            {
+              "name": "--zoomable-image-controls"
+            },
+            {
+              "name": "--zoomable-image-annotation-background",
+              "default": "rgba(28, 32, 40, 0.15)",
+              "description": "Annotation box background"
+            },
+            {
+              "name": "--zoomable-image-annotation-active-background",
+              "default": "rgba(28, 32, 40, 0.25)",
+              "description": "Annotation background on hover or keyboard focus"
+            },
+            {
+              "name": "--zoomable-image-annotation-border-color",
+              "default": "rgba(28, 32, 40, 0.2)",
+              "description": "Annotation box border color"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "ZoomableImage",
+          "declaration": {
+            "name": "ZoomableImage",
+            "module": "dist/index.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "defineZoomableImage",
+          "declaration": {
+            "name": "defineZoomableImage",
+            "module": "dist/index.js"
+          }
+        }
+      ]
+    }
+  ]
+}
