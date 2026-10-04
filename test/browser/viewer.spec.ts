@@ -352,7 +352,7 @@ test('original sizing, absent caption, annotation defaults and tooltip placement
   await expect(image.locator('.region')).toHaveCSS('background-color', 'rgba(28, 32, 40, 0.15)');
   await expect(image.locator('.region')).toHaveCSS('border-top-color', 'rgba(28, 32, 40, 0.2)');
   await image.locator('.region').focus();
-  await expect(image.locator('.tooltip')).toHaveCSS('font-size', '18px');
+  await expect(image.locator('.tooltip')).toHaveCSS('font-size', '13px');
   const region = await image.locator('.region').boundingBox();
   const tooltip = await image.locator('.tooltip').boundingBox();
   expect(tooltip!.y + tooltip!.height).toBeLessThanOrEqual(region!.y - 7);
