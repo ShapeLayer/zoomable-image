@@ -219,7 +219,7 @@ export class ZoomableImage extends ElementBase {
   private initialize() {
     this.root = this.attachShadow({ mode: 'open' });
     // Only static, library-owned markup is parsed. Consumer text is assigned with textContent.
-    this.root.innerHTML = `<style>${styles}</style><button type="button" class="trigger" part="trigger"><img loading="lazy" part="thumbnail"></button><dialog part="dialog"><div class="stage"><div class="surface"><img class="image" part="image" draggable="false"><div class="regions"></div></div></div><button type="button" class="close" part="close">×</button><div class="controls"><p class="caption" part="caption" id="caption"></p><div class="toolbar" part="toolbar"><button type="button" class="out">−</button><span class="level" aria-live="polite"></span><button type="button" class="in">+</button></div></div><div class="tooltip" part="tooltip" id="tooltip" role="tooltip" hidden></div></dialog>`;
+    this.root.innerHTML = `<style>${styles}</style><button type="button" class="trigger" part="trigger"><img loading="lazy" part="thumbnail"></button><dialog part="dialog"><div class="stage"><div class="surface"><img class="image" part="image" draggable="false"><div class="regions"></div></div></div><button type="button" class="close" part="close"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg></button><div class="controls"><p class="caption" part="caption" id="caption"></p><div class="toolbar" part="toolbar"><button type="button" class="out"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button><span class="level" aria-live="polite"></span><button type="button" class="in"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></button></div></div><div class="tooltip" part="tooltip" id="tooltip" role="tooltip" hidden></div></dialog>`;
     const get = <T extends Element>(s: string) => this.root.querySelector<T>(s)!;
     this.trigger = get('.trigger');
     this.dialog = get('dialog');
@@ -262,8 +262,9 @@ export class ZoomableImage extends ElementBase {
         this.zoomOut();
       }
     });
-    this.stage.addEventListener('click', (e) => {
-      if (e.target === this.stage) this.close();
+    this.dialog.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (e.target === this.stage || e.target === this.dialog) this.close();
     });
     this.surface.addEventListener('pointerdown', (e) => {
       if (this.zoom <= 1 || e.button !== 0 || (e.target as Element).closest('.region')) return;

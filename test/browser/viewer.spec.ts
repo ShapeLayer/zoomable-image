@@ -340,12 +340,19 @@ test('original sizing, absent caption, annotation defaults and tooltip placement
   );
   expect(box!.y + box!.height / 2).toBeCloseTo(viewport.height / 2, 0);
   const touch = !!testInfo.project.use.hasTouch || viewport.width <= 600;
-  await expect(image.locator('.toolbar')).toHaveCSS('height', touch ? '38px' : '22px');
-  await expect(image.locator('.level')).toHaveCSS('font-size', touch ? '15px' : '11px');
+  const toolbar = await image.locator('.toolbar').boundingBox();
+  expect(toolbar!.height).toBeCloseTo(touch ? 51.3 : 29.7, 1);
+  for (const selector of ['.in', '.out', '.level']) {
+    const control = await image.locator(selector).boundingBox();
+    expect(control!.y + control!.height / 2).toBeCloseTo(toolbar!.y + toolbar!.height / 2, 1);
+  }
+  const closeButton = await image.locator('.close').boundingBox();
+  expect(closeButton!.height).toBeCloseTo(touch ? 62.7 : 36.3, 1);
+  await expect(image.locator('.level')).toHaveCSS('font-size', touch ? '20px' : '15px');
   await expect(image.locator('.region')).toHaveCSS('background-color', 'rgba(28, 32, 40, 0.15)');
   await expect(image.locator('.region')).toHaveCSS('border-top-color', 'rgba(28, 32, 40, 0.2)');
   await image.locator('.region').focus();
-  await expect(image.locator('.tooltip')).toHaveCSS('font-size', '12px');
+  await expect(image.locator('.tooltip')).toHaveCSS('font-size', '18px');
   const region = await image.locator('.region').boundingBox();
   const tooltip = await image.locator('.tooltip').boundingBox();
   expect(tooltip!.y + tooltip!.height).toBeLessThanOrEqual(region!.y - 7);
@@ -359,4 +366,14 @@ test('original sizing, absent caption, annotation defaults and tooltip placement
   const topTooltip = await image.locator('.tooltip').boundingBox();
   if (topRegion!.y < topTooltip!.height + 16)
     expect(topTooltip!.y).toBeGreaterThanOrEqual(topRegion!.y + topRegion!.height);
+});
+
+test('clicking the dark background closes without activating the host', async ({ page }) => {
+  await page.goto('/examples/');
+  const image = page.locator('zoomable-image').first();
+  await image.locator('.trigger').click();
+  await expect(image.locator('dialog')).toBeVisible();
+  await image.locator('.stage').click({ position: { x: 2, y: 2 } });
+  await expect(image.locator('dialog')).not.toBeVisible();
+  await expect(image.locator('.trigger')).toBeFocused();
 });
