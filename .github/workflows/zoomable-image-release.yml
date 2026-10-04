@@ -7,6 +7,14 @@ on:
         description: 'Exact package.json version to publish (for example 0.1.0)'
         required: true
         type: string
+      authentication:
+        description: 'npm authentication method (token requires NPM_TOKEN secret)'
+        required: true
+        default: trusted
+        type: choice
+        options:
+          - trusted
+          - token
 
 permissions:
   contents: read
@@ -27,19 +35,42 @@ jobs:
         with:
           node-version: '24'
           cache: pnpm
-          registry-url: 'https://registry.npmjs.org'
       - name: Verify release branch and version
         env:
           EXPECTED_VERSION: ${{ inputs.version }}
         run: |
           test "$GITHUB_REF" = refs/heads/main
           node --input-type=module -e "import pkg from './package.json' with { type: 'json' }; if (pkg.version !== process.env.EXPECTED_VERSION) throw new Error('Version mismatch');"
+      - name: Verify token configuration
+        if: inputs.authentication == 'token'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo '::error::Token authentication requires NPM_TOKEN in repository secrets or the npm environment secrets.'
+            exit 1
+          fi
+      - name: Verify npm supports trusted publishing
+        run: |
+          npm --version
+          node --input-type=module -e "import { execFileSync } from 'node:child_process'; const [major, minor, patch] = execFileSync('npm', ['--version'], { encoding: 'utf8' }).trim().split('.').map(Number); if (major < 11 || (major === 11 && (minor < 5 || (minor === 5 && patch < 1)))) throw new Error('npm 11.5.1+ required for trusted publishing');"
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm test:release
       - run: pnpm test:package
       - run: pnpm format:check
-      - name: Publish verified package
+      - name: Publish with npm trusted publishing
+        if: inputs.authentication == 'trusted'
+        run: npm publish --access public --provenance
+      - name: Configure npm token authentication
+        if: inputs.authentication == 'token'
+        run: |
+          # npm expands this placeholder only in the publish step.
+          # shellcheck disable=SC2016
+          printf '%s\n' '//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}' > "$RUNNER_TEMP/zoomable-image.npmrc"
+          echo "NPM_CONFIG_USERCONFIG=$RUNNER_TEMP/zoomable-image.npmrc" >> "$GITHUB_ENV"
+      - name: Publish with npm token
+        if: inputs.authentication == 'token'
         run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
